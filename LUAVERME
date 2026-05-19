@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VermeLua">
+<title>VermeLua 🌕</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --night: #0a0a0f;
+    --deep: #10101a;
+    --surface: #16162a;
+    --surface2: #1e1e35;
+    --moon: #f5c842;
+    --moon-glow: #f5c84230;
+    --moon-dim: #c9a030;
+    --red: #c0392b;
+    --red-glow: #c0392b40;
+    --red-light: #e74c3c;
+    --text: #e8e0d0;
+    --text-dim: #8a8070;
+    --taken: #27ae60;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--night);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Starfield background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, #ffffff44 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, #ffffff33 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 8%, #ffffff55 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 60%, #ffffff22 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 25%, #ffffff44 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 80% 70%, #ffffff33 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 45%, #ffffff55 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 75%, #ffffff22 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 88%, #ffffff33 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 35% 55%, #ffffff44 0%, transparent 100%),
+      radial-gradient(1px 1px at 48% 30%, #ffffff33 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 15%, #ffffff22 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 50%, #ffffff44 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 95% 85%, #ffffff55 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 92%, #ffffff33 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Subtle nebula */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 30%, #1a1a3a55 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 80% 70%, #2a1a1a44 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 0 100px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    padding: 48px 24px 32px;
+    position: relative;
+  }
+
+  .moon-orb {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 20px;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .moon-orb::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: radial-gradient(circle, var(--moon-glow) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  .moon-orb .moon-circle {
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle at 35% 35%, #fff9e0 0%, var(--moon) 40%, var(--moon-dim) 100%);
+    border-radius: 50%;
+    box-shadow:
+      0 0 30px var(--moon-glow),
+      0 0 60px var(--moon-glow),
+      inset -8px -8px 20px rgba(0,0,0,0.3);
+    animation: floatMoon 4s ease-in-out infinite;
+    position: relative;
+  }
+
+  /* Crater details */
+  .moon-circle::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 50%;
+    top: 22px; left: 55px;
+    box-shadow:
+      -20px 12px 0 rgba(0,0,0,0.06),
+      -5px 35px 0 8px rgba(0,0,0,0.05);
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  @keyframes floatMoon {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .app-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    background: linear-gradient(135deg, var(--moon) 0%, #fff5cc 50%, var(--moon-dim) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    line-height: 1;
+  }
+
+  .app-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* ── PRÓXIMA LUA ── */
+  .next-card {
+    margin: 0 16px 24px;
+    background: var(--surface);
+    border: 1px solid var(--moon-glow);
+    border-radius: 20px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+
+  .next-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, var(--moon-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .next-card.is-today {
+    border-color: var(--red);
+    box-shadow: 0 0 24px var(--red-glow), inset 0 0 40px var(--red-glow);
+    animation: alertPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes alertPulse {
+    0%, 100% { box-shadow: 0 0 24px var(--red-glow), inset 0 0 40px var(--red-glow); }
+    50% { box-shadow: 0 0 48px var(--red-glow), inset 0 0 60px var(--red-glow); }
+  }
+
+  .next-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .next-date {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--moon);
+    line-height: 1.1;
+  }
+
+  .next-date.today-text {
+    color: var(--red-light);
+  }
+
+  .next-countdown {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .next-countdown strong {
+    color: var(--text);
+    font-style: normal;
+  }
+
+  .pill-reminder {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--red-glow);
+    border: 1px solid var(--red);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+
+  .pill-icon {
+    font-size: 1.4rem;
+  }
+
+  .pill-text {
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .pill-text small {
+    display: block;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+
+  /* ── MARK TAKEN BUTTON ── */
+  .btn-taken {
+    display: block;
+    width: calc(100% - 32px);
+    margin: 0 16px 24px;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--red) 0%, #922b21 100%);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px var(--red-glow);
+    text-transform: uppercase;
+  }
+
+  .btn-taken:active {
+    transform: scale(0.97);
+  }
+
+  .btn-taken.taken {
+    background: linear-gradient(135deg, var(--taken) 0%, #1e8449 100%);
+    box-shadow: 0 4px 20px #27ae6040;
+  }
+
+  .btn-taken:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  /* ── SEÇÃO ANO ── */
+  .section {
+    margin: 0 16px 12px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .year-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .year-btn {
+    background: var(--surface2);
+    border: 1px solid #ffffff15;
+    color: var(--text);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .year-btn:hover { background: var(--surface); border-color: var(--moon-glow); }
+
+  .year-display {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: var(--moon);
+    min-width: 50px;
+    text-align: center;
+  }
+
+  /* ── MOON LIST ── */
+  .moon-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .moon-item {
+    background: var(--surface);
+    border: 1px solid #ffffff0a;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .moon-item:hover {
+    border-color: var(--moon-glow);
+    background: var(--surface2);
+  }
+
+  .moon-item.past {
+    opacity: 0.5;
+  }
+
+  .moon-item.current-moon {
+    border-color: var(--moon);
+    background: var(--surface2);
+    box-shadow: 0 0 16px var(--moon-glow);
+  }
+
+  .moon-item.taken-moon {
+    border-color: #27ae6030;
+  }
+
+  .moon-item.taken-moon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #27ae6008 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .moon-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .moon-emoji {
+    font-size: 1.5rem;
+    min-width: 28px;
+    text-align: center;
+  }
+
+  .moon-info {
+    flex: 1;
+  }
+
+  .moon-date-text {
+    font-size: 1rem;
+    color: var(--text);
+    font-weight: 300;
+    line-height: 1.2;
+  }
+
+  .moon-weekday {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .moon-status {
+    font-size: 1.2rem;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  /* ── NOTIFICATION TOGGLE ── */
+  .notif-bar {
+    margin: 0 16px 24px;
+    background: var(--surface);
+    border: 1px solid #ffffff0a;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .notif-icon { font-size: 1.4rem; }
+
+  .notif-info { flex: 1; }
+
+  .notif-title {
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .notif-sub {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .toggle {
+    position: relative;
+    width: 48px; height: 26px;
+    flex-shrink: 0;
+  }
+
+  .toggle input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: var(--surface2);
+    border: 1px solid #ffffff15;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    width: 20px; height: 20px;
+    background: var(--text-dim);
+    border-radius: 50%;
+    top: 2px; left: 2px;
+    transition: all 0.3s;
+  }
+
+  .toggle input:checked + .toggle-track {
+    background: var(--moon);
+    border-color: var(--moon);
+  }
+
+  .toggle input:checked + .toggle-track::after {
+    transform: translateX(22px);
+    background: var(--night);
+  }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin: 0 16px 24px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid #ffffff08;
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    color: var(--moon);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface2);
+    border: 1px solid var(--moon-glow);
+    color: var(--text);
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-style: italic;
+    transition: transform 0.3s ease;
+    z-index: 100;
+    white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #ffffff10, transparent);
+    margin: 8px 16px 24px;
+  }
+
+  /* ── INSTALL HINT ── */
+  .install-hint {
+    margin: 0 16px 16px;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-style: italic;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="moon-orb">
+      <div class="moon-circle"></div>
+    </div>
+    <h1 class="app-title">VermeLua</h1>
+    <p class="app-subtitle">Ivermectina · Lua Cheia · Saúde</p>
+  </div>
+
+  <!-- PRÓXIMA / HOJE -->
+  <div class="next-card" id="nextCard">
+    <div class="next-label">🌕 Próxima Lua Cheia</div>
+    <div class="next-date" id="nextDate">—</div>
+    <div class="next-countdown" id="nextCountdown">carregando...</div>
+    <div class="pill-reminder" id="pillReminder" style="display:none">
+      <span class="pill-icon">💊</span>
+      <div class="pill-text">
+        Hora de tomar a Ivermectina
+        <small>Marque após tomar para registrar</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTÃO TOMAR -->
+  <button class="btn-taken" id="btnTaken" onclick="markTaken()">
+    💊 Marcar como Tomado Hoje
+  </button>
+
+  <!-- NOTIFICAÇÕES -->
+  <div class="notif-bar">
+    <span class="notif-icon">🔔</span>
+    <div class="notif-info">
+      <div class="notif-title">Lembretes nas Luas Cheias</div>
+      <div class="notif-sub" id="notifSub">Ative para ser avisado</div>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" id="notifToggle" onchange="toggleNotifications()">
+      <span class="toggle-track"></span>
+    </label>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card">
+      <div class="stat-value" id="statTotal">—</div>
+      <div class="stat-label">Luas este ano</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statTaken">—</div>
+      <div class="stat-label">Tomadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statStreak">—</div>
+      <div class="stat-label">Sequência</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- LISTA DO ANO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Calendário Lunar</span>
+      <div class="year-nav">
+        <button class="year-btn" onclick="changeYear(-1)">‹</button>
+        <span class="year-display" id="yearDisplay">2024</span>
+        <button class="year-btn" onclick="changeYear(1)">›</button>
+      </div>
+    </div>
+    <div class="moon-list" id="moonList"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- INSTALL HINT -->
+  <p class="install-hint">
+    📲 Adicione à tela inicial do celular<br>para usar como aplicativo instalado
+  </p>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  CÁLCULO ASTRONÔMICO DE LUA CHEIA (Jean Meeus)
+//  Sem API. Offline. Precisão < 1 minuto.
+// ═══════════════════════════════════════════
+
+function julianDate(year, month, day) {
+  if (month <= 2) { year--; month += 12; }
+  const A = Math.floor(year / 100);
+  const B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+}
+
+function jdToDate(jd) {
+  const z = Math.floor(jd + 0.5);
+  const f = (jd + 0.5) - z;
+  let A = z;
+  if (z >= 2299161) {
+    const alpha = Math.floor((z - 1867216.25) / 36524.25);
+    A = z + 1 + alpha - Math.floor(alpha / 4);
+  }
+  const B = A + 1524;
+  const C = Math.floor((B - 122.1) / 365.25);
+  const D = Math.floor(365.25 * C);
+  const E = Math.floor((B - D) / 30.6001);
+  const day = B - D - Math.floor(30.6001 * E);
+  const month = E < 14 ? E - 1 : E - 13;
+  const year = month > 2 ? C - 4716 : C - 4715;
+  const hours = f * 24;
+  return new Date(Date.UTC(year, month - 1, day, Math.round(hours)));
+}
+
+function fullMoonsForYear(year) {
+  const moons = [];
+  // JD of known new moon reference
+  let k = Math.floor((year - 2000) * 12.3685);
+  k += 0.5; // full moon offset
+
+  for (let i = -2; i < 16; i++) {
+    const kk = k + i;
+    const T = kk / 1236.85;
+    const T2 = T * T;
+    const T3 = T2 * T;
+    const T4 = T3 * T;
+
+    let JDE = 2451550.09766
+      + 29.530588861 * kk
+      + 0.00015437 * T2
+      - 0.000000150 * T3
+      + 0.00000000073 * T4;
+
+    const M = (2.5534 + 29.10535670 * kk - 0.0000014 * T2 - 0.00000011 * T3) * Math.PI / 180;
+    const Mprime = (201.5643 + 385.81693528 * kk + 0.0107582 * T2 + 0.00001238 * T3 - 0.000000058 * T4) * Math.PI / 180;
+    const F = (160.7108 + 390.67050284 * kk - 0.0016118 * T2 - 0.00000227 * T3 + 0.000000011 * T4) * Math.PI / 180;
+    const omega = (124.7746 - 1.56375588 * kk + 0.0020672 * T2 + 0.00000215 * T3) * Math.PI / 180;
+
+    // Corrections for full moon
+    JDE += -0.40614 * Math.sin(Mprime)
+      + 0.17302 * Math.sin(M)
+      + 0.01614 * Math.sin(2 * Mprime)
+      + 0.01043 * Math.sin(2 * F)
+      + 0.00734 * Math.sin(Mprime - M)
+      - 0.00515 * Math.sin(Mprime + M)
+      + 0.00209 * Math.sin(2 * M)
+      - 0.00111 * Math.sin(Mprime - 2 * F)
+      - 0.00057 * Math.sin(Mprime + 2 * F)
+      + 0.00056 * Math.sin(2 * Mprime + M)
+      - 0.00042 * Math.sin(3 * Mprime)
+      + 0.00042 * Math.sin(M + 2 * F)
+      + 0.00038 * Math.sin(M - 2 * F)
+      - 0.00024 * Math.sin(2 * Mprime - M)
+      - 0.00017 * Math.sin(omega)
+      - 0.00007 * Math.sin(Mprime + 2 * M)
+      + 0.00004 * Math.sin(2 * Mprime - 2 * F)
+      + 0.00004 * Math.sin(3 * M)
+      + 0.00003 * Math.sin(Mprime + M - 2 * F)
+      + 0.00003 * Math.sin(2 * Mprime + 2 * F)
+      - 0.00003 * Math.sin(Mprime + M + 2 * F)
+      + 0.00003 * Math.sin(Mprime - M + 2 * F)
+      - 0.00002 * Math.sin(Mprime - M - 2 * F)
+      - 0.00002 * Math.sin(3 * Mprime + M)
+      + 0.00002 * Math.sin(4 * Mprime);
+
+    const date = jdToDate(JDE);
+    if (date.getUTCFullYear() === year) {
+      moons.push(date);
+    }
+  }
+
+  moons.sort((a, b) => a - b);
+  // Remove duplicates (same day)
+  const unique = [];
+  const seen = new Set();
+  for (const d of moons) {
+    const key = `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
+    if (!seen.has(key)) { seen.add(key); unique.push(d); }
+  }
+  return unique;
+}
+
+// ═══════════════════════════════════════════
+//  ESTADO
+// ═══════════════════════════════════════════
+
+const STORAGE_KEY = 'vermelua_taken';
+const NOTIF_KEY = 'vermelua_notif';
+
+let currentYear = new Date().getFullYear();
+let takenDates = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let notifEnabled = localStorage.getItem(NOTIF_KEY) === 'true';
+
+function saveTaken() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(takenDates));
+}
+
+function dateKey(date) {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ═══════════════════════════════════════════
+//  FORMATAÇÃO
+// ═══════════════════════════════════════════
+
+const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const WEEKDAYS_PT = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+
+function formatDate(date) {
+  const d = new Date(date);
+  // Adjust for local display
+  const local = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+  return `${local.getDate()} de ${MONTHS_PT[local.getMonth()]}`;
+}
+
+function formatDateFull(date) {
+  const d = new Date(date);
+  const local = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+  return `${local.getDate()} de ${MONTHS_PT[local.getMonth()]} de ${local.getFullYear()}`;
+}
+
+function getWeekday(date) {
+  const d = new Date(date);
+  const local = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+  return WEEKDAYS_PT[local.getDay()];
+}
+
+function daysBetween(a, b) {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  return Math.round((b - a) / msPerDay);
+}
+
+// ═══════════════════════════════════════════
+//  RENDER PRINCIPAL
+// ═══════════════════════════════════════════
+
+function render() {
+  const now = new Date();
+  const today = todayKey();
+  const allMoons = fullMoonsForYear(currentYear);
+  const thisYearMoons = fullMoonsForYear(new Date().getFullYear());
+
+  // Próxima lua cheia (global)
+  const allFuture = [];
+  for (let y = now.getFullYear(); y <= now.getFullYear() + 1; y++) {
+    fullMoonsForYear(y).forEach(m => {
+      const local = new Date(m.getTime() + m.getTimezoneOffset() * 60000);
+      const mk = dateKey(local);
+      const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      if (local >= nowMidnight) allFuture.push({ date: m, local, key: mk });
+    });
+  }
+  allFuture.sort((a, b) => a.date - b.date);
+  const next = allFuture[0];
+
+  // Render próxima
+  const nextDateEl = document.getElementById('nextDate');
+  const nextCountdownEl = document.getElementById('nextCountdown');
+  const nextCard = document.getElementById('nextCard');
+  const pillReminder = document.getElementById('pillReminder');
+  const btnTaken = document.getElementById('btnTaken');
+
+  if (next) {
+    const days = daysBetween(new Date(now.getFullYear(), now.getMonth(), now.getDate()), next.local);
+    nextDateEl.textContent = formatDate(next.local);
+
+    if (days === 0) {
+      nextCard.classList.add('is-today');
+      nextDateEl.classList.add('today-text');
+      document.querySelector('.next-label').textContent = '🌕 LUA CHEIA HOJE!';
+      nextCountdownEl.innerHTML = `<strong>É hoje, ${getWeekday(next.local)}!</strong> Não esqueça de tomar.`;
+      pillReminder.style.display = 'flex';
+    } else {
+      nextCard.classList.remove('is-today');
+      nextDateEl.classList.remove('today-text');
+      document.querySelector('.next-label').textContent = '🌕 Próxima Lua Cheia';
+      nextCountdownEl.innerHTML = `em <strong>${days} dia${days > 1 ? 's' : ''}</strong> · ${getWeekday(next.local)}`;
+      pillReminder.style.display = 'none';
+    }
+
+    // Botão tomar
+    const isTodayMoon = days === 0;
+    const alreadyTaken = takenDates.includes(today);
+
+    if (isTodayMoon) {
+      btnTaken.style.display = 'block';
+      btnTaken.disabled = alreadyTaken;
+      if (alreadyTaken) {
+        btnTaken.textContent = '✅ Ivermectina Tomada!';
+        btnTaken.classList.add('taken');
+      } else {
+        btnTaken.textContent = '💊 Marcar como Tomado Hoje';
+        btnTaken.classList.remove('taken');
+      }
+    } else {
+      btnTaken.style.display = 'none';
+    }
+  }
+
+  // Stats
+  const takenThisYear = thisYearMoons.filter(m => {
+    const local = new Date(m.getTime() + m.getTimezoneOffset() * 60000);
+    return takenDates.includes(dateKey(local));
+  }).length;
+
+  // Streak
+  let streak = 0;
+  const sorted = [...thisYearMoons].sort((a, b) => b - a);
+  for (const m of sorted) {
+    const local = new Date(m.getTime() + m.getTimezoneOffset() * 60000);
+    if (local > now) continue;
+    if (takenDates.includes(dateKey(local))) streak++;
+    else break;
+  }
+
+  document.getElementById('statTotal').textContent = thisYearMoons.length;
+  document.getElementById('statTaken').textContent = takenThisYear;
+  document.getElementById('statStreak').textContent = streak;
+
+  // Year display
+  document.getElementById('yearDisplay').textContent = currentYear;
+
+  // Moon list
+  renderMoonList(allMoons, today);
+
+  // Notif toggle
+  document.getElementById('notifToggle').checked = notifEnabled;
+  document.getElementById('notifSub').textContent = notifEnabled
+    ? 'Lembretes ativados ✓'
+    : 'Toque para ativar lembretes';
+}
+
+function renderMoonList(moons, today) {
+  const list = document.getElementById('moonList');
+  const now = new Date();
+
+  list.innerHTML = moons.map((m, i) => {
+    const local = new Date(m.getTime() + m.getTimezoneOffset() * 60000);
+    const key = dateKey(local);
+    const isPast = local < new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const isToday = key === today;
+    const isTaken = takenDates.includes(key);
+    const isFuture = !isPast && !isToday;
+
+    let cls = 'moon-item';
+    if (isPast) cls += ' past';
+    if (isToday) cls += ' current-moon';
+    if (isTaken) cls += ' taken-moon';
+
+    let status = '';
+    if (isTaken) status = '✅';
+    else if (isToday) status = '🔴';
+    else if (isPast) status = '○';
+    else status = '';
+
+    return `
+      <div class="${cls}" onclick="onMoonClick('${key}', ${isToday})">
+        <span class="moon-num">${i + 1}</span>
+        <span class="moon-emoji">${isToday ? '🌕' : (isPast ? '🌑' : '🌔')}</span>
+        <div class="moon-info">
+          <div class="moon-date-text">${formatDate(local)}</div>
+          <div class="moon-weekday">${getWeekday(local)}${isToday ? ' · Hoje!' : ''}</div>
+        </div>
+        <span class="moon-status">${status}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+//  INTERAÇÕES
+// ═══════════════════════════════════════════
+
+function markTaken() {
+  const today = todayKey();
+  if (!takenDates.includes(today)) {
+    takenDates.push(today);
+    saveTaken();
+    showToast('✅ Ivermectina registrada! Boa saúde 🌿');
+    render();
+  }
+}
+
+function onMoonClick(key, isToday) {
+  if (isToday) {
+    markTaken();
+  }
+}
+
+function changeYear(delta) {
+  currentYear += delta;
+  renderMoonList(fullMoonsForYear(currentYear), todayKey());
+  document.getElementById('yearDisplay').textContent = currentYear;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════════
+//  NOTIFICAÇÕES
+// ═══════════════════════════════════════════
+
+async function toggleNotifications() {
+  if (!('Notification' in window)) {
+    showToast('❌ Seu navegador não suporta notificações');
+    document.getElementById('notifToggle').checked = false;
+    return;
+  }
+
+  if (document.getElementById('notifToggle').checked) {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      notifEnabled = true;
+      localStorage.setItem(NOTIF_KEY, 'true');
+      showToast('🔔 Lembretes ativados!');
+      scheduleNotifications();
+    } else {
+      notifEnabled = false;
+      document.getElementById('notifToggle').checked = false;
+      showToast('❌ Permissão negada. Ative nas configurações do navegador.');
+    }
+  } else {
+    notifEnabled = false;
+    localStorage.setItem(NOTIF_KEY, 'false');
+    showToast('🔕 Lembretes desativados');
+  }
+
+  document.getElementById('notifSub').textContent = notifEnabled
+    ? 'Lembretes ativados ✓'
+    : 'Toque para ativar lembretes';
+}
+
+function scheduleNotifications() {
+  // Verifica se hoje é lua cheia e notifica
+  const now = new Date();
+  const today = todayKey();
+  const thisYearMoons = fullMoonsForYear(now.getFullYear());
+
+  for (const m of thisYearMoons) {
+    const local = new Date(m.getTime() + m.getTimezoneOffset() * 60000);
+    const key = dateKey(local);
+    if (key === today && !takenDates.includes(key)) {
+      new Notification('🌕 VermeLua — Lua Cheia Hoje!', {
+        body: 'Hora de tomar a Ivermectina. Não esqueça! 💊',
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23f5c842"/></svg>',
+        tag: 'vermelua-fullmoon',
+        renotify: false
+      });
+      break;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+//  VERIFICAÇÃO DIÁRIA
+// ═══════════════════════════════════════════
+
+function dailyCheck() {
+  if (!notifEnabled || !('Notification' in window) || Notification.permission !== 'granted') return;
+  scheduleNotifications();
+}
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+
+render();
+dailyCheck();
+
+// Repete verificação a cada hora (app aberto)
+setInterval(dailyCheck, 60 * 60 * 1000);
+</script>
+
+<!-- SERVICE WORKER para PWA -->
+<script>
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'vermelua-v1';
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+    });
+  `;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+</script>
+
+</body>
+</html>
